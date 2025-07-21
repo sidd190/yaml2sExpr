@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fullstack-app
+    env: node
+    plan: free
+    buildCommand: |
+      cd ../frontend && npm install && npm run build && cd ../backend && npm install
+    startCommand: node app.js
+    rootDir: backend
+    envVars:
+      - key: NODE_ENV
+        value: production 
