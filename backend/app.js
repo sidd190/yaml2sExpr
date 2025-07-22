@@ -8,13 +8,11 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// === Middleware ===
 app.use(cors());
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')));
 
 const upload = multer({ dest: 'uploads/' });
 
-// === Conversion Logic ===
 function escapeString(s) {
   return s.replace(/"/g, '\\"');
 }
@@ -36,7 +34,6 @@ function toSExprItem(item) {
   for (const key in item) {
     const val = item[key];
     out += ` (yaml:${key} `;
-
     if (key === 'part_no') {
       out += toSymbol(val);
     } else if (typeof val === 'string' || typeof val === 'number') {
@@ -45,7 +42,6 @@ function toSExprItem(item) {
     } else if (typeof val === 'object') {
       out += toSExprItem(val);
     }
-
     out += `)`;
   }
   out += `)`;
@@ -71,22 +67,18 @@ function toSExprMap(node, prefix = 'yaml') {
   return out;
 }
 
-// === API Endpoint ===
 app.post('/api/convert', upload.single('file'), (req, res) => {
   try {
-    const filePath = req.file.path;
-    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const fileContent = fs.readFileSync(req.file.path, 'utf8');
     const parsed = yaml.load(fileContent);
     const result = `(\n${toSExprMap(parsed)}\n)`;
-
-    fs.unlinkSync(filePath); // cleanup
-    res.send({ output: result });
+    fs.unlinkSync(req.file.path);
+    res.json({ output: result });
   } catch (err) {
-    res.status(400).json({ error: `Error: ${err.message}` });
+    res.status(400).json({ error: err.message });
   }
 });
 
-// === Fallback: serve React app ===
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'));
 });
