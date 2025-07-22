@@ -6,12 +6,15 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
+// === Middleware ===
 app.use(cors());
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')));
 
 const upload = multer({ dest: 'uploads/' });
 
+// === Conversion Logic ===
 function escapeString(s) {
   return s.replace(/"/g, '\\"');
 }
@@ -68,6 +71,7 @@ function toSExprMap(node, prefix = 'yaml') {
   return out;
 }
 
+// === API Endpoint ===
 app.post('/api/convert', upload.single('file'), (req, res) => {
   try {
     const filePath = req.file.path;
@@ -75,13 +79,18 @@ app.post('/api/convert', upload.single('file'), (req, res) => {
     const parsed = yaml.load(fileContent);
     const result = `(\n${toSExprMap(parsed)}\n)`;
 
-    fs.unlinkSync(filePath); // clean up uploaded file
+    fs.unlinkSync(filePath); // cleanup
     res.send({ output: result });
   } catch (err) {
     res.status(400).json({ error: `Error: ${err.message}` });
   }
 });
 
+// === Fallback: serve React app ===
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
