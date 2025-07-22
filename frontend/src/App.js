@@ -22,9 +22,8 @@ function App() {
       const res = await fetch('/api/convert', {
         method: 'POST',
         body: formData,
-      });      
+      });
       const data = await res.json();
-
       if (res.ok) {
         setOutput(data.output);
       } else {
