@@ -11,17 +11,9 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the React build folder (if exists)
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-// Health check and fallback route for React app
+// Serve the index.html file directly from the root
 app.get('/', (req, res) => {
-  const buildPath = path.join(__dirname, 'client/build', 'index.html');
-  if (fs.existsSync(buildPath)) {
-    res.sendFile(buildPath);
-  } else {
-    res.sendStatus(200); // Health check fallback
-  }
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Existing POST route for conversion
