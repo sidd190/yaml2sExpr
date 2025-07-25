@@ -8,7 +8,13 @@ const path = require('path');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-app.use(cors());
+// Configure CORS to allow the specific origin
+app.use(cors({
+  origin: 'https://yaml2sexpr.onrender.com',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.json());
 
 // Serve index.html from the root
