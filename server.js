@@ -3,6 +3,7 @@ const multer = require('multer');
 const yaml = require('js-yaml');
 const fs = require('fs').promises;
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -10,6 +11,20 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the React build folder (if exists)
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Health check and fallback route for React app
+app.get('/', (req, res) => {
+  const buildPath = path.join(__dirname, 'client/build', 'index.html');
+  if (fs.existsSync(buildPath)) {
+    res.sendFile(buildPath);
+  } else {
+    res.sendStatus(200); // Health check fallback
+  }
+});
+
+// Existing POST route for conversion
 function isDate(str) {
   return /^\d{4}-\d{2}-\d{2}$/.test(str);
 }
@@ -66,6 +81,7 @@ app.post('/convert', upload.single('file'), async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
