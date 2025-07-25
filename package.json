@@ -1,27 +1,13 @@
 {
-  "name": "coding-challenge",
+  "name": "yaml-to-sexp",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sidd190/yaml2sExpr.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sidd190/yaml2sExpr/issues"
-  },
-  "homepage": "https://github.com/sidd190/yaml2sExpr#readme",
-  "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "express": "^4.17.1",
+    "multer": "^1.4.5-lts.1",
     "js-yaml": "^4.1.0",
-    "multer": "^2.0.2"
+    "cors": "^2.8.5"
   }
 }

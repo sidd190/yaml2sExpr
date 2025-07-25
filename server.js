@@ -11,9 +11,12 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
-// Serve the index.html file directly from the root
+// Serve index.html from the root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  const indexPath = path.join(__dirname, 'index.html');
+  fs.access(indexPath)
+    .then(() => res.sendFile(indexPath))
+    .catch(() => res.status(404).send('Index file not found'));
 });
 
 // Existing POST route for conversion
